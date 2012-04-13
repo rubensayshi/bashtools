@@ -1,0 +1,62 @@
+#!/bin/bash
+
+TRUNKDIR="/work/hyvestrunk"
+MINORDIR="/work/hyvesminor"
+MERGEFROMDIR="$TRUNKDIR"
+MERGETODIR="$MINORDIR"
+DOSVNUP=True
+
+REVISION=$1
+
+echo ""
+echo "==== MERGE REV[$REVISION] FROM [$MERGEFROMDIR] TO [$MERGETODIR] ===="
+echo ""
+
+if [ $DOSVNUP == True ]; then
+    echo "==== :: SOURCE SVNUP INFORMATION :: ===="
+    svn up $MERGEFROMDIR
+    echo ""
+
+    echo "==== :: TARGET SVNUP INFORMATION :: ===="
+    svn up $MERGETODIR
+    echo ""
+fi
+
+echo "==== :: COMMIT INFORMATION :: ===="
+COMMITINFO=$(svn log -v -c $REVISION $MERGEFROMDIR -l1)
+COMMITMESSAGE=$(svn log -c $REVISION $MERGEFROMDIR -l1 | grep -E -v '^(r[0-9]|---|$)')
+echo "$COMMITINFO"
+echo ""
+
+echo "==== :: MERGE INFORMATION :: ===="
+svn merge $MERGEFROMDIR $MERGETODIR -c $REVISION --ignore-ancestry
+echo ""
+
+echo "==== :: TARGET SVNST INFORMATION :: ===="
+svn st $MERGETODIR
+echo ""
+
+
+while [ true ]; do    
+    echo "==== :: COMMIT THIS MERGE ? [Y/N] :: ===="
+    read -e PROMPT
+    echo ""
+
+    if [ "Y" == "$PROMPT" -o "y" == "$PROMPT" ]; then
+        echo "==== :: EXECUTING COMMIT WITH MESSAGE :: ===="
+        echo "$COMMITMESSAGE"
+        echo ""
+        echo "==== !! EXECUTING COMMIT !! ===="
+        svn ci $MERGETODIR -m "$COMMITMESSAGE" 
+        echo ""
+
+        exit
+        
+    fi 
+    if [ "N" == "$PROMPT" -o "n" == "$PROMPT" ]; then
+        echo "==== !! EXIT - CLEAN IT UP YOURSELF !! ===="
+        echo ""
+
+        exit
+    fi
+done

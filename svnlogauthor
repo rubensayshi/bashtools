@@ -1,0 +1,19 @@
+#!/bin/bash
+
+TRUNKDIR="/work/hyvestrunk"
+LOGFROMDIR="$TRUNKDIR"
+
+AUTHOR=$1
+
+if [ -n "$2" ]; then
+    LOGFROMDIR=$(readlink -f $2)
+fi
+
+if [ ! -d $LOGFROMDIR ]; then 
+    echo "SPECIFIED DIR DOES NOT EXIST: [$LOGFROMDIR]"
+    exit
+fi
+
+COMMITINFO=$(svn log $LOGFROMDIR -l250 | sed -n "/$AUTHOR/,/-----$/ p")
+
+echo "$COMMITINFO"
