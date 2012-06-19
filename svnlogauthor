@@ -1,19 +1,25 @@
 #!/bin/bash
 
 TRUNKDIR="/work/hyvestrunk"
-LOGFROMDIR="$TRUNKDIR"
+LOGPATH="$TRUNKDIR"
+LIMIT="1000"
 
 AUTHOR=$1
 
 if [ -n "$2" ]; then
-    LOGFROMDIR=$(readlink -f $2)
+    LOGPATH=$(readlink -e $2)
 fi
 
-if [ ! -d $LOGFROMDIR ]; then 
-    echo "SPECIFIED DIR DOES NOT EXIST: [$LOGFROMDIR]"
+if [ -n "$3" ]; then
+    LIMIT=$3
+fi
+
+
+if [ ! -e $LOGPATH ]; then 
+    echo "SPECIFIED PATH IS INVALID: [$LOGPATH]"
     exit
 fi
 
-COMMITINFO=$(svn log $LOGFROMDIR -l250 | sed -n "/$AUTHOR/,/-----$/ p")
+COMMITINFO=$(svn log $LOGPATH -l$LIMIT -v | sed -n "/$AUTHOR/,/-----$/ p")
 
 echo "$COMMITINFO"

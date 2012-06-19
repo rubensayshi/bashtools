@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ssh rubenvm2 'sudo cp /root/.ssh/id_rsa_hadoop /tmp/ && sudo chown apache:apache /tmp/id_rsa_hadoop && sudo chmod 0600 /tmp/id_rsa_hadoop'

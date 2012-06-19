@@ -1,0 +1,19 @@
+#!/bin/bash
+
+START=$(date +%Y-%m-%d)
+CNT=1
+FORMAT="%Y-%m-%d"
+
+if [ -n "$1" ]; then
+    START="$1"
+fi
+
+if [ -n "$2" ]; then
+    CNT=$2
+fi
+
+shift
+shift
+
+for ((c=0; c<=$CNT; c++)); do DATE="`date --date="${START} +${c} day" +${FORMAT}`"; echo $DATE; done | xargs -I DATE $*;
+
