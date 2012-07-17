@@ -1,0 +1,23 @@
+#!/bin/bash
+
+CMD=$*
+SLEEP=2
+PREV=""
+
+while true; do
+    RES=$($CMD)
+
+    if [ "$PREV" == "" ]; then
+        echo ""
+        echo " -- started watching [[ $CMD ]] -- "
+        echo "$RES"
+    elif [ "$RES" != "$PREV" ]; then
+        echo ""
+        echo " -- update "`date`" -- "
+        echo "$RES"
+    fi
+    
+    PREV=$RES
+    sleep $SLEEP
+done
+
