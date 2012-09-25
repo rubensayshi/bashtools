@@ -1,6 +1,4 @@
 #!/bin/bash
 
-source /etc/profile
-
-sudo /etc/init.d/openvpn start client
+echo "sudo /etc/init.d/openvpn start client"
 

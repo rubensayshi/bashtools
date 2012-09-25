@@ -38,7 +38,7 @@ echo ""
 
 
 while [ true ]; do    
-    echo "==== :: COMMIT THIS MERGE ? [Y/N] :: ===="
+    echo "==== :: COMMIT THIS MERGE ? [y/N] :: ===="
     read -e PROMPT
     echo ""
 
