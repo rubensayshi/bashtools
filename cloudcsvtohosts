@@ -1,0 +1,101 @@
+#!/usr/bin/python
+
+import sys
+import re
+from cssselect import GenericTranslator, SelectorError
+from lxml import etree
+from time import time
+
+ignore = [
+    re.compile('.{32}-vpn')
+]
+        
+html   = sys.argv[1] if len(sys.argv) > 1 else None
+hosts  = sys.argv[2] if len(sys.argv) > 2 else None
+suffix = sys.argv[3] if len(sys.argv) > 3 else None
+ 
+if not html or not hosts or not suffix:
+    print "usage; ./cloudcsvtohosts <path-to-instances.htm> <path-to-hosts> <suffix>"
+    sys.exit(1)
+
+tree = etree.HTML(open(html, 'r').read())
+
+total_template = """%(current_hosts)s
+%(new_hosts)s"""
+
+new_template = """########################################
+## START cloudcsvtohosts %(suffix)s ##
+########################################
+%(output)s
+########################################
+##  END cloudcsvtohosts %(suffix)s  ##
+########################################"""
+
+output = ""
+for tr in tree.xpath(GenericTranslator().css_to_xpath('table#instances tbody tr')):
+    hostname = tr.xpath(GenericTranslator().css_to_xpath('td:nth-of-type(2) a'))[0]
+    ips      = tr.xpath(GenericTranslator().css_to_xpath('td:nth-of-type(3) ul li'))
+    
+    hostname = hostname.text
+    ips      = [ip.text for ip in ips]
+    
+    if any([regex.match(hostname) for regex in ignore]):
+        continue
+    
+    hostname = "%(hostname)s.%(suffix)s" % dict(hostname = hostname, suffix = suffix)
+    ip = ips[0]
+    
+    output += "%(ip)s\t\t%(hostname)s\n" % dict(hostname = hostname, ip = ip)
+
+# create our new output
+new_hosts = new_template % dict(suffix = suffix, output = output)
+
+# read current hosts
+current_hosts = open(hosts, 'r').read()
+
+# create backup
+backup = "/tmp/cloudcsvtohosts." + str(int(time())) + ".backup"
+f_backup = open(backup, 'w')
+f_backup.write(current_hosts)
+print """
+########################################
+## created backup file [%s]
+########################################
+""" % backup
+
+# remove our old entries
+re_sep   = re.compile('###+')
+re_start = re.compile('## START cloudcsvtohosts %(suffix)s ##' % dict(suffix = suffix))
+re_end   = re.compile('##  END cloudcsvtohosts %(suffix)s  ##' % dict(suffix = suffix))
+
+lines = current_hosts.split("\n")
+
+find_old = True
+while find_old:
+    find_old   = False
+    sep_match  = False
+    start_line = False
+    end_line   = False
+    for idx, line in enumerate(lines):
+        if sep_match and re_start.match(line):
+            start_line = idx
+        elif sep_match and re_end.match(line):
+            end_line = idx
+        
+        sep_match = re_sep.match(line)
+
+    if start_line and end_line:
+        start_line -= 1
+        end_line += 2
+        find_old = True
+        del lines[start_line:end_line]
+    
+
+current_hosts = "\n".join(lines)
+
+total_output = total_template % dict(current_hosts = current_hosts, new_hosts = new_hosts)
+
+f_hosts = open(hosts, 'w')
+f_hosts.write(total_output)
+
+print total_output
