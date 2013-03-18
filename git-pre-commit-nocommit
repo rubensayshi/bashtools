@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Pre commit hook that prevents FORBIDDEN code from being commited.
+# Add unwanted code to the FORBIDDEN array as necessary
+
+NONE='\033[00m'
+RED='\033[01;31m'
+GREEN='\033[01;32m'
+YELLOW='\033[01;33m'
+PURPLE='\033[01;35m'
+CYAN='\033[01;36m'
+WHITE='\033[01;37m'
+BOLD='\033[1m'
+UNDERLINE='\033[4m'
+
+FORBIDDEN=( "debugger" "console.log" "nocommit" )
+GITDIFF="git diff --cached"
+
+for i in "${FORBIDDEN[@]}"; do
+    # only process files that are staged
+    for file in `$GITDIFF --name-only`; do
+        # check if we can find our forbidden keyword in the staged diff
+        found=$($GITDIFF $file | grep $i)
+        if [ -n "$found" ]; then
+            GREP_COLOR='4;5;37;41' grep --color --with-filename -n $i $file && \
+             echo 'COMMIT REJECTED Found'  $i 'references. Please remove them before commiting' && \
+             exit 1
+        fi
+        
+    done
+done
+
+tput sgr0
+
+exit 0
