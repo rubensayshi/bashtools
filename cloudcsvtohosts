@@ -11,7 +11,18 @@ ignore = [
 ]
 
 def help():
-    print "usage; ./cloudcsvtohosts <path-to-instances.htm> <path-to-hosts> <suffix>"
+    print """
+usage; ./cloudcsvtohosts <path-to-instances.htm> <path-to-hosts> <suffix>
+
+modifies your hosts file to create '<IP> <hotname>.<suffix>' entries for each machine in the cluster.
+ * if you reuse the same suffix it can overwrite the previously generated lines.
+ * creates a backup of the hosts file before messing with it ;-)
+
+how to use it; 
+ - goto the 'instances' page of the cluster you want to import.
+ - save the HTML of the page (CTRL+S will work, but it also stores anoying folder with images)
+ - run this command (use the same suffix as the previous time)
+"""
     sys.exit(1)
 
 if len(sys.argv) <= 1 or '--help' in sys.argv:
