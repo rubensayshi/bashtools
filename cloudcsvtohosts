@@ -9,14 +9,20 @@ from time import time
 ignore = [
     re.compile('.{32}-vpn')
 ]
-        
+
+def help():
+    print "usage; ./cloudcsvtohosts <path-to-instances.htm> <path-to-hosts> <suffix>"
+    sys.exit(1)
+
+if len(sys.argv) <= 1 or '--help' in sys.argv:
+    help()
+ 
 html   = sys.argv[1] if len(sys.argv) > 1 else None
 hosts  = sys.argv[2] if len(sys.argv) > 2 else None
 suffix = sys.argv[3] if len(sys.argv) > 3 else None
  
 if not html or not hosts or not suffix:
-    print "usage; ./cloudcsvtohosts <path-to-instances.htm> <path-to-hosts> <suffix>"
-    sys.exit(1)
+    help()
 
 tree = etree.HTML(open(html, 'r').read())
 
@@ -31,7 +37,7 @@ new_template = """########################################
 ##  END cloudcsvtohosts %(suffix)s  ##
 ########################################"""
 
-output = ""
+output = []
 for tr in tree.xpath(GenericTranslator().css_to_xpath('table#instances tbody tr')):
     hostname = tr.xpath(GenericTranslator().css_to_xpath('td:nth-of-type(2) a'))[0]
     ips      = tr.xpath(GenericTranslator().css_to_xpath('td:nth-of-type(3) ul li'))
@@ -45,9 +51,13 @@ for tr in tree.xpath(GenericTranslator().css_to_xpath('table#instances tbody tr'
     hostname = "%(hostname)s.%(suffix)s" % dict(hostname = hostname, suffix = suffix)
     ip = ips[0]
     
-    output += "%(ip)s\t\t%(hostname)s\n" % dict(hostname = hostname, ip = ip)
+    print hostname
+    
+    output.append(dict(hostname = hostname, ip = ip))
 
 # create our new output
+output.sort(key = lambda row: row['hostname'])
+output = "\n".join(["%(ip)s\t\t%(hostname)s" % row for row in output])
 new_hosts = new_template % dict(suffix = suffix, output = output)
 
 # read current hosts
