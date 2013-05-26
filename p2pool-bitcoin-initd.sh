@@ -50,7 +50,7 @@ case "$1" in
 	;;
 
   *)
-	    echo "Usage: "$1" {start|stop|restart}"
+	    echo "Usage: ${1} {start|stop|restart}"
 	    exit 1
 	;;
 esac
