@@ -1,17 +1,22 @@
 #!/bin/sh
 
-# Quick start-stop-daemon example, derived from Debian /etc/init.d/ssh
+# 
+# simple script to daemonize p2pool
+# you can copy/paste this script if you want to run multiple instances of p2pool for different currencies, MAKE SURE TO CHANGE NAME= in that case!
+# output is logged to $LOGPATH/$NAME.log
+# 
+
 set -e
 
 PIDPATH="/var/run/p2pool"
 LOGPATH="/var/log/p2pool"
 
-P2POOL="/home/user/p2pool"
+P2POOL="/home/user/p2pool" # SET TO directory where p2pool script is found
 DAEMON="${P2POOL}/run_p2pool.py"
-DAEMON_OPTS="bitcoind --give-author 0 --irc-announce --max-conns 1000000 --fee 0"
+DAEMON_OPTS="bitcoind --give-author 0 --irc-announce --max-conns 1000000 --fee 0" # SET TO whatever arguments you need
 
-CHUID="user:user"
-NAME="bitcoind"
+CHUID="user:user" # SET TO user:group you want to run the process
+NAME="bitcoind" # SET TO unique name if you copy/paste this script to run multiple instances of p2pool
 PIDFILE="${PIDPATH}/${NAME}.pid"
 LOGFILE="${LOGPATH}/${NAME}.log"
 
