@@ -8,11 +8,11 @@ set -e
 
 PIDPATH="/var/run/bitcoind"
 
-BASEPATH="/usr/bin" # SET TO directory where script is found
+BASEPATH="/home/user/bitcoin/src" # SET TO directory where script is found
 DAEMON="${BASEPATH}/bitcoind"
 DAEMON_OPTS="" # SET TO whatever arguments you need
 
-CHUID="user:user" # SET TO user:group you want to run the process
+CHUID="bitcoin:bitcoin" # SET TO user:group you want to run the process
 NAME="bitcoind" # SET TO unique name if you copy/paste this script to run multiple instances of this script
 PIDFILE="${PIDPATH}/${NAME}.pid"
 
@@ -27,25 +27,25 @@ case "$1" in
             mkdir ${PIDPATH} && chmod 777 ${PIDPATH}
         fi
         
-        start-stop-daemon --background --chuid $CHUID --make-pidfile --start --quiet --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+        start-stop-daemon --background --chuid $CHUID --start --quiet --exec $DAEMON -- $DAEMON_OPTS
         echo "."
-	;;
+  ;;
   stop)
         echo -n "Stopping daemon: ${NAME}"
-    	start-stop-daemon --stop --quiet --oknodo --retry=TERM/30/KILL/5 --pidfile $PIDFILE
+      start-stop-daemon --stop --quiet --oknodo --retry=TERM/30/KILL/5 --pidfile $PIDFILE
         echo "."
-	;;
+  ;;
   restart)
         echo -n "Restarting daemon: ${NAME}"
-    	start-stop-daemon --stop --quiet --oknodo --retry=TERM/30/KILL/5 --pidfile $PIDFILE
-    	start-stop-daemon --background --chuid $CHUID --make-pidfile --start --quiet --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
-	    echo "."
-	;;
+      start-stop-daemon --stop --quiet --oknodo --retry=TERM/30/KILL/5 --pidfile $PIDFILE
+      start-stop-daemon --background --chuid $CHUID --start --quiet --exec $DAEMON -- $DAEMON_OPTS
+      echo "."
+  ;;
 
   *)
-	    echo "Usage: ${1} {start|stop|restart}"
-	    exit 1
-	;;
+      echo "Usage: ${1} {start|stop|restart}"
+      exit 1
+  ;;
 esac
 
 exit 0
