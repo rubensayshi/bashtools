@@ -1,0 +1,10 @@
+#!/bin/sh
+
+BRANCH=`git rev-parse --abbrev-ref HEAD`
+
+if [ "${BRANCH}" = "staging" ]; then
+    echo "Can't commit on 'staging' branch!"
+    echo "Can't commit on 'staging' branch!"
+    echo "Can't commit on 'staging' branch!"
+	exit 1
+fi
