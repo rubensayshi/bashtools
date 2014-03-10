@@ -1,9 +1,9 @@
 #!/bin/bash
 
-HOSTS="web10 web11 web12 web13 celery3 celery4 varnish3 varnish4"
-SUFFIX=".live-cloud"
+HOSTS="web2 web3 celery1 varnish1 varnish2"
+SUFFIX=".staging-cloud"
 
-CMDS=$1 # "ls /var/www/jaws/app/jaws/common.py*; ls /var/www/jaws/app/jaws/application.py*; "
+CMDS=$1 # "ls /var/www/jaws/app/jaws/texts.py*"
 GO=""
 
 echo ""

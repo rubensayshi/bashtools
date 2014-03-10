@@ -1,2 +1,4 @@
 #!/bin/bash
-redis-cli keys $1 | awk '{print $1}' | xargs redis-cli del {} \;
+
+KEY=$1
+redis-cli keys "${KEY}" | awk '{print $1}' | xargs redis-cli del {} \;
