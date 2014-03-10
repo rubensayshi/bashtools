@@ -1,0 +1,78 @@
+#!/bin/bash
+# Git pre-commit hook that runs multiple hooks specified in $HOOKS.
+# Make sure this script is executable. Bypass hooks with git commit --no-verify.
+
+# This file is part of a set of unofficial pre-commit hooks available
+# at github.
+# Link:    https://github.com/githubbrowser/Pre-commit-hooks
+# Contact: David Martin, david.martin.mailbox@googlemail.com
+
+
+###########################################################
+# SETTINGS:
+# pre-commit hooks to be executed. They should be in the same .git/hooks/ folder
+# as this script. Hooks should return 0 if successful and nonzero to cancel the
+# commit. They are executed in the order in which they are listed.
+#HOOKS="pre-commit-default pre-commit-compile pre-commit-uncrustify"
+HOOKS="git-pre-commit-nodebug git-pre-commit-nostaging"
+###########################################################
+# There should be no need to change anything below this line.
+
+function canonicalize_filename () {
+    local target_file=$1
+    local physical_directory=""
+    local result=""
+
+    # Need to restore the working directory after work.
+    pushd `pwd` > /dev/null
+
+    cd "$(dirname "$target_file")"
+    target_file=`basename $target_file`
+
+    # Iterate down a (possible) chain of symlinks
+    while [ -L "$target_file" ]
+    do
+        target_file=$(readlink "$target_file")
+        cd "$(dirname "$target_file")"
+        target_file=$(basename "$target_file")
+    done
+
+    # Compute the canonicalized name by finding the physical path
+    # for the directory we're in and appending the target file.
+    physical_directory=`pwd -P`
+    result="$physical_directory"/"$target_file"
+
+    # restore the working directory after work.
+    popd > /dev/null
+
+    echo "$result"
+}
+
+# exit on error
+set -e
+
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+SCRIPT="$(canonicalize_filename "$0")"
+
+# Absolute path this script is in, thus /home/user/bin
+SCRIPTPATH="$(dirname "$SCRIPT")"
+
+
+for hook in $HOOKS
+do
+    echo "Running hook: $hook"
+    # run hook if it exists
+    # if it returns with nonzero exit with 1 and thus abort the commit
+    if [ -f "$SCRIPTPATH/$hook" ]; then
+        "$SCRIPTPATH/$hook"
+        if [ $? != 0 ]; then
+            exit 1
+        fi
+    else
+        echo "Error: file $hook not found."
+        echo "Aborting commit. Make sure the hook is in $SCRIPTPATH and executable."
+        echo "You can disable it by removing it from the list in $SCRIPT."
+        echo "You can skip all pre-commit hooks with --no-verify (not recommended)."
+        exit 1
+    fi
+done
