@@ -1,0 +1,50 @@
+[user]
+name = Ruben de Vries
+email = ruben@rubensayshi.com
+
+[core]
+excludesfile = /home/ruben/.gitignore
+
+[giggle]
+main-window-maximized = true
+main-window-geometry = 453x160+2317+293
+history-view-vpane-position = 1053
+main-window-view = FileView
+file-view-hpane-position = 328
+file-view-vpane-position = 1136
+show-graph = true
+
+[help]
+autocorrect = 0
+
+[branch]
+autosetuprebase = always
+
+[push]
+default = simple 
+ 
+[alias]
+st = status -b # smarter status - include tag and branch info
+yday = log --since '1 day ago' --oneline --author ruben@rubensayshi.com # I know what you did yesterday - great for follow-ups
+ls = log --pretty=format:"%C(yellow)%h %C(blue)%ad%C(red)%d %C(reset)%s%C(green) [%cn]" --decorate --date=short # pretty one-line log with tags, branches and authors
+lsv = log --pretty=format:"%C(yellow)%h %C(blue)%ad%C(red)%d %C(reset)%s%C(green) [%cn]" --decorate --date=short --numstat # a verbose ls, shows changed files too
+
+# some resets without explanation
+r = reset
+r1 = reset HEAD^
+rh = reset --hard
+rh1 = reset HEAD^ --hard
+ 
+# basic shortcuts
+pick = cherry-pick
+ci = commit
+a = add -A
+amend = commit --amend
+continue = rebase --continue
+ 
+# stash shortcuts
+sl = stash list
+sa = stash apply
+ss = stash save
+ 
+up = !git remote update -p; git merge --ff-only @{u}
