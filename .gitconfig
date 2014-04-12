@@ -20,9 +20,6 @@ autocorrect = 0
 [branch]
 autosetuprebase = always
 
-[push]
-default = simple 
- 
 [alias]
 st = status -b # smarter status - include tag and branch info
 yday = log --since '1 day ago' --oneline --author ruben@rubensayshi.com # I know what you did yesterday - great for follow-ups
