@@ -21,7 +21,10 @@ num = content.split('http://www.be-at.tv/embed.swf?p=')[1].split('&')[0]
  
 print num
  
-f = urllib2.urlopen('http://www.be-at.tv/CMS/Feeds/Playlist.ashx?page='+num)
+url = 'http://old.be-at.tv/CMS/Feeds/Playlist.ashx?page='+num
+print url
+
+f = urllib2.urlopen(url)
 content = f.read()
 f.close()
  
