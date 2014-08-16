@@ -1,0 +1,19 @@
+#!/bin/bash
+
+echo "stashing work"
+STASH=$(git stash)
+
+echo $STASH
+
+echo "pull ..."
+git pull
+
+
+if [ $? -eq 0 ]; then
+    if [[ "$STASH" != "No local changes to save" ]]; then
+        echo "applying stash"
+        git stash apply
+    fi
+else
+    echo "merge failed, not applying stash!"
+fi
