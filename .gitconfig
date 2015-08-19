@@ -45,3 +45,5 @@ sa = stash apply
 ss = stash save
  
 up = !git remote update -p; git merge --ff-only @{u}
+[init]
+	templatedir = ~/.git_template
