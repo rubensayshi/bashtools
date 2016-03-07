@@ -7,3 +7,5 @@ CMakeLists.txt
 node_modules
 npm-debug.log
 vendor
+.dev.js
+.dev*.sqlite3

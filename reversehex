@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+console.log(process.argv[2] + " -> " + [].reverse.call(new Buffer(process.argv[2], 'hex')).toString('hex'));
