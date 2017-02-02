@@ -1,0 +1,7 @@
+#!/usr/bin/php
+<?php
+
+foreach (array_slice($argv, 1) as $hex) {
+    echo $hex . ": " . hexdec($hex) . "\n";
+}
+

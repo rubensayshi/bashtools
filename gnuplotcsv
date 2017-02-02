@@ -1,0 +1,28 @@
+#!/usr/bin/gnuplot
+
+set datafile separator "," 
+set title "CPU usage"
+set xlabel "tick" 
+set ylabel "percent"
+set term png size 1024,1024
+set key outside
+set key right top
+
+min(a,b) = a >= b ? b : a
+samples(n) = min(int($0), n)
+avg_data = ""
+
+sum_n(data, n) = ( n <= 0 ? 0 : word(data, words(data) - n) + sum_n(data, n - 1))
+
+avg(x, n) = ( avg_data = sprintf("%s %f", (int($0)==0)?"":avg_data, x), sum_n(avg_data, samples(n))/samples(n)) 
+
+
+set output "dstat-mvavg.png"
+plot "dstat.csv" using 0:(avg(column(2), 10)) every 10::4 title "system" with lines, \
+"dstat.csv" using 0:(avg(column(1), 10)) every 10::4 title "user" with lines
+
+set output "dstat.png"
+plot "dstat.csv" using 0:2 every 10::4 title "system" with lines, \
+"dstat.csv" using 0:1 every 10::4 title "user" with lines
+
+

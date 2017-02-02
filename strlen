@@ -1,0 +1,6 @@
+#!/usr/bin/php
+<?php
+
+foreach (array_slice($argv, 1) as $str) {
+    echo substr($str, 0, 10) . "... " . strlen($str) . "\n";
+}
