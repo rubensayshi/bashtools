@@ -1,3 +1,3 @@
 #!/bin/bash
 
-DEVDBCONNECTION=live php /work/blocktrail-webapp/index.php tools wallets support $*
+DEVDBCONNECTION=live php5.6 /work/blocktrail-webapp/index.php tools wallets support $*
