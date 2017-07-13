@@ -1,3 +1,3 @@
 #!/bin/bash
 
-DEVDBCONNECTION=live php5.6 /work/blocktrail-webapp/index.php tools wallets support $*
+DEVDBCONNECTION=live SUPPORT_API_URL="https://support-api.blocktrail.com" php5.6 /work/blocktrail-webapp/index.php tools support support $*

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+ORIG=$PS1
+TITLE="\e]2;$1\a"
+PS1=${ORIG}${TITLE}
+
+
+
+docker exec -it $1 bash
