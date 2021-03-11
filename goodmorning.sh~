@@ -1,0 +1,7 @@
+#!/bin/bash
+
+gcloud compute disk-types list >> /dev/null
+
+KUBECONFIG=/Users/Shared/work/gcloud/kplx/kube-config/kplx-kempen-test-env kube get pods >> /dev/null
+KUBECONFIG=/Users/Shared/work/gcloud/kplx/kube-config/kplx-kempen-review-env kube get pods >> /dev/null
+KUBECONFIG=/Users/Shared/work/gcloud/kplx/kube-config/kplx-kempen-prod-env kube get pods >> /dev/null
