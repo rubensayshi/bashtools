@@ -1,0 +1,7 @@
+#!/usr/bin/php
+<?php
+
+foreach (array_slice($argv, 1) as $dec) {
+    echo $dec . ": " . dechex($dec) . "\n";
+}
+
