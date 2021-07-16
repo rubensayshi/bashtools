@@ -22,7 +22,7 @@ function entpainpack() {
   mkdir -p $ENTPAINDIR
 
   # make a list of files which are on gitignore
-  git clean -n d -X ent/ | sed 's/Would remove //g' > ${ENTPAINDIR}/$BRANCH.files
+  git clean -n -d -X ent/ | sed 's/Would remove //g' > ${ENTPAINDIR}/$BRANCH.files
   # create an archive of all those files, so we can switch back to it later
   tar czf ${ENTPAINDIR}/$BRANCH.tar.gz -T ${ENTPAINDIR}/$BRANCH.files
 }
@@ -35,7 +35,7 @@ function entpainunpack() {
     echo "entpain:unpack $BRANCH"
 
     # delete any git ignored files
-    git clean -n d -X ent/
+    git clean -q -f -d -X ent/
     # unpack from our archive
     tar xzf ${ENTPAINDIR}/${BRANCH}.tar.gz
   fi
@@ -55,7 +55,7 @@ if [[ $CHECKOUTTYPE == "branch" ]]; then
     fi
     # if we know which branch we're switch towards than we can try to unpack its archive
     if [[ "$NEWBRANCH" != "" && ! "$NEWBRANCH" =~ remotes\/.+ && ! "$NEWBRANCH" =~ ~[0-9]+$  ]]; then
-      entpainpack "$NEWBRANCH"
+      entpainunpack "$NEWBRANCH"
     fi
   fi
 fi
