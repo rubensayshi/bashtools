@@ -1,8 +1,9 @@
 #!/bin/bash
 
-git branch --merged master | grep -v '*' | grep -v -E '^(\* )master$' | xargs -n 1 git branch -d
+# delete any branches which have been merged into master (and aren't current branch or master)
+git branch --merged master | grep -v '*' | grep -v -E '^\*? *master$' | xargs -n 1 git branch -d
 
-for BRANCH in `git branch | grep -v '*' | grep -v -E '^(\* )master$'`; do
+for BRANCH in `git branch | grep -v '*' | grep -v -E '^\*? *master$'`; do
 	echo $BRANCH
 
 	DELETE=""
