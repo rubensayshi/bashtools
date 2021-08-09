@@ -16,28 +16,30 @@ CHECKOUTTYPE=$3
 
 function entpainpack() {
   BRANCH=$1
+  BRANCHSLUG=$(echo "$1" | sed 's/\//__/g')
 
   echo "entpain:pack $BRANCH"
 
   mkdir -p $ENTPAINDIR
 
   # make a list of files which are on gitignore
-  git clean -n -d -X ent/ | sed 's/Would remove //g' > ${ENTPAINDIR}/$BRANCH.files
+  git clean -n -d -X ent/ | sed 's/Would remove //g' > ${ENTPAINDIR}/$BRANCHSLUG.files
   # create an archive of all those files, so we can switch back to it later
-  tar czf ${ENTPAINDIR}/$BRANCH.tar.gz -T ${ENTPAINDIR}/$BRANCH.files
+  tar czf ${ENTPAINDIR}/$BRANCHSLUG.tar.gz -T ${ENTPAINDIR}/$BRANCHSLUG.files
 }
 
 function entpainunpack() {
   BRANCH=$1
+  BRANCHSLUG=$(echo "$1" | sed 's/\//__/g')
 
   # can only unpack if there's an archive
-  if [[ -f ${ENTPAINDIR}/${BRANCH}.tar.gz ]]; then
+  if [[ -f ${ENTPAINDIR}/${BRANCHSLUG}.tar.gz ]]; then
     echo "entpain:unpack $BRANCH"
 
     # delete any git ignored files
     git clean -q -f -d -X ent/
     # unpack from our archive
-    tar xzf ${ENTPAINDIR}/${BRANCH}.tar.gz
+    tar xzf ${ENTPAINDIR}/${BRANCHSLUG}.tar.gz
   fi
 }
 
@@ -59,3 +61,4 @@ if [[ $CHECKOUTTYPE == "branch" ]]; then
     fi
   fi
 fi
+
