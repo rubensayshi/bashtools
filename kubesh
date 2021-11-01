@@ -1,0 +1,15 @@
+#!/bin/bash
+
+POD=( $(kubectl -n $KUBECTL_NAMESPACE get pods | grep $1 | awk '{print $1}') )
+
+if [[ "${#POD[@]}" == "0" ]]; then
+	echo "did not find any pods"; exit 1
+elif [[ "${#POD[@]}" != "1" ]]; then
+	echo "found more than 1 pod: ${POD[*]}"; exit 1
+fi 
+
+POD=${POD[0]}
+echo $POD
+
+kubectl exec -n $KUBECTL_NAMESPACE -it $POD -- /bin/sh # kubesh
+
