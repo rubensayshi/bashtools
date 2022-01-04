@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+#
+# this is a git post-checkout hook to cache auto generated files per branch 
+#  and quickly switch between them without having to regenerate the files.
+#
+# it should be placed in `.git/hooks/post-checkout` (note: without the `.sh`!).
+# I personally just symlink it in there from wherever I placed the original ;)
+#
+
+
 set -e
 
 DEBUG=false

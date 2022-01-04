@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+#
+# this is a git post-rewrite hook to cache auto generated files per branch 
+#  and quickly switch between them without having to regenerate the files.
+#
+# it's complementary to the post-checkout hook and should be placed in `.git/hooks/post-rewrite` (note: without the `.sh`!).
+# I personally just symlink it in there from wherever I placed the original ;)
+#
+
 set -e
 
 DEBUG=false
