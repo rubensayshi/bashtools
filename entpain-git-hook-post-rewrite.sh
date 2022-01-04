@@ -49,6 +49,10 @@ if [[ "$1" == "rebase" && "$2" == "" ]]; then
       HEAD=${COMMITS[1]}
     fi
   done < /dev/stdin
+  
+  if [[ "$HEAD" == "" ]]; then
+  	exit 0
+  fi
 
   BRANCH=$(git name-rev --exclude 'remotes/*' --exclude='tags/*' --name-only $HEAD || echo "")
   # master is special, there's often other branches with the same ref but we want to prioritize master ...
