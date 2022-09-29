@@ -1,5 +1,7 @@
 #!/bin/bash
 
+KUBESH=${KUBESH:-/bin/bash}
+
 POD=( $(kubectl -n $KUBECTL_NAMESPACE get pods | grep $1 | awk '{print $1}') )
 
 if [[ "${#POD[@]}" == "0" ]]; then
@@ -11,8 +13,5 @@ fi
 POD=${POD[0]}
 echo $POD
 
-#if [[ "$(kubectl get -n $KUBECTL_NAMESPACE pod $POD | grep -o 'ContainerCreating')" == "ContainerCreating" ]]; then
-#  kubectl wait -n $KUBECTL_NAMESPACE pod/$POD --for=condition=Ready --timeout=300s
-#fi
+kubectl exec -n $KUBECTL_NAMESPACE -it $POD "${@:2}" -- ${KUBESH} # kubesh
 
-kubectl logs -n $KUBECTL_NAMESPACE -f $POD ${@:2}

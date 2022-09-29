@@ -1,0 +1,4 @@
+#!/bin/bash
+
+tee >( go-test-summary-only )
+

@@ -10,9 +10,3 @@ fi
 
 POD=${POD[0]}
 echo $POD
-
-#if [[ "$(kubectl get -n $KUBECTL_NAMESPACE pod $POD | grep -o 'ContainerCreating')" == "ContainerCreating" ]]; then
-#  kubectl wait -n $KUBECTL_NAMESPACE pod/$POD --for=condition=Ready --timeout=300s
-#fi
-
-kubectl logs -n $KUBECTL_NAMESPACE -f $POD ${@:2}

@@ -4,11 +4,10 @@
 git branch --merged master | grep -v '*' | grep -v -E '^\*? *master$' | xargs -n 1 git branch -d
 
 for BRANCH in `git branch | grep -v '*' | grep -v -E '^\*? *master$'`; do
-	echo $BRANCH
-
 	DELETE=""
 	while [ -z $DELETE ]; do 
 	    echo "==== :: $BRANCH delete [y/N] :: ===="
+		git log -1 --format='%s  (%an / %cd)' $BRANCH
 	    read -e PROMPT
 
 	    if [ "Y" == "$PROMPT" -o "y" == "$PROMPT" ]; then
@@ -21,6 +20,7 @@ for BRANCH in `git branch | grep -v '*' | grep -v -E '^\*? *master$'`; do
 
 	if [ "$DELETE" = "yes" ]; then
 		git branch -D $BRANCH
-		echo
 	fi
+	
+	echo
 done

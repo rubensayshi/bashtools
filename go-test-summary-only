@@ -1,0 +1,37 @@
+#!/bin/awk -f
+
+/^--- PASS:/ {
+    pass[pass_cnt++] = $0
+}
+
+/^--- FAIL:/ {
+    fail[fail_cnt++] = $0
+}
+
+/^panic:/ {
+    panic[panic_cnt++] = $0
+}
+
+END {
+    if (pass_cnt == 0) {
+        print "No passed tests. :("
+    } else {
+        print pass_cnt " PASSED " (pass_cnt > 1 ? "tests" : "test") ":"
+        for (i in pass) { print "\t" pass[i] }
+    }
+
+    if (fail_cnt == 0) {
+        print "No failed tests. \\o/"
+    } else {
+        print fail_cnt " FAILED " (fail_cnt > 1 ? "tests" : "test") " :("
+        for (i in fail) { print "\t" fail[i] }
+    }
+
+    if (panic_cnt == 0) {
+        print "No panics. \\o/"
+    } else {
+        print panic_cnt (panic_cnt > 1 ? " PANICS" : " PANIC") " :("
+        for (i in panic) { print "\t" panic[i] }
+    }
+}
+

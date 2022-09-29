@@ -1,0 +1,3 @@
+#!/bin/bash
+
+xxd -ps -c 200 | tr -d '\n'
