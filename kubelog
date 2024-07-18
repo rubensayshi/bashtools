@@ -15,4 +15,4 @@ echo $POD
 #  kubectl wait -n $KUBECTL_NAMESPACE pod/$POD --for=condition=Ready --timeout=300s
 #fi
 
-kubectl logs -n $KUBECTL_NAMESPACE -f $POD ${@:2}
+kubectl logs -n $KUBECTL_NAMESPACE --tail=10000 -f $POD ${@:2}

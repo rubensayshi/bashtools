@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LIMIT=20
+LIMIT=${LIMIT:-20}
 
 OLD_IFS=${IFS}
 IFS=$'\n'

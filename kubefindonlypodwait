@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -e
+
+
+PODS=()
+for row in $(kubectl -n $KUBECTL_NAMESPACE get pods -o json | jq -r '.items[] | select(.metadata.name | match("'$1'";"i")) | @base64'); do
+	_jq() {
+    	echo ${row} | base64 --decode | jq -r ${1}
+    }
+    name=$(_jq '.metadata.name')
+    delete=$(_jq '.metadata.deletionTimestamp')
+
+    if [[ $delete != "" && $delete != "null" ]]; then
+    	# terminating ...
+    	echo "$name is terminating..." 1>&2
+    else
+    	PODS+=($row)
+	fi
+done
+
+if [[ "${#PODS[@]}" == "0" ]]; then
+	echo "did not find any pods" 1>&2
+	exit 1
+elif [[ "${#PODS[@]}" != "1" ]]; then
+	echo "found more than 1 pod:" 1>&2
+	for row in "${PODS[@]}"; do
+		_jq() {
+	    	echo ${row} | base64 --decode | jq -r ${1}
+	    }
+	    name=$(_jq '.metadata.name')
+
+	    echo " - $name" 1>&2
+	done
+
+	exit 1
+fi 
+
+row="${PODS[0]}"
+_jq() {
+	echo ${row} | base64 --decode | jq -r ${1}
+}
+
+name=$(_jq '.metadata.name')
+
+echo "$name"
+
+kubectl -n $KUBECTL_NAMESPACE wait --timeout=600s --for=condition=ready pod $name 1>&2
