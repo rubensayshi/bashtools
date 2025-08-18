@@ -4,18 +4,11 @@ POD=( $(kubectl -n $KUBECTL_NAMESPACE get pods | grep $1 | awk '{print $1}') )
 
 if [[ "${#POD[@]}" == "0" ]]; then
 	echo "did not find any pods"; exit 1
-elif [[ "${#POD[@]}" == "1" ]]; then
-	POD=${POD[0]}
-else
-	PODSTARTOF=( $(kubectl -n $KUBECTL_NAMESPACE get pods | grep ^$1 | awk '{print $1}') )
-
-	if [[ "${#PODSTARTOF[@]}" == "1" ]]; then
-		POD=${PODSTARTOF[0]}
-	else
-		echo "found more than 1 pod: ${POD[*]}"; exit 1
-	fi
+elif [[ "${#POD[@]}" != "1" ]]; then
+	echo "found more than 1 pod: ${POD[*]}"; exit 1
 fi 
 
+POD=${POD[0]}
 echo $POD
 
 #if [[ "$(kubectl get -n $KUBECTL_NAMESPACE pod $POD | grep -o 'ContainerCreating')" == "ContainerCreating" ]]; then
