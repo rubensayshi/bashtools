@@ -17,7 +17,7 @@ while IFS= read -r line; do
 	fi
 
 	# check if the commit message appears in the target
-	if git log --pretty=format:'%h - %s' --abbrev-commit $TO | head -$TO_UPTO | grep "$MSG" > /dev/null; then
+	if git log --pretty=format:'%h - %s' --abbrev-commit $TO | head -$TO_UPTO | grep -F "$MSG" > /dev/null; then
 		# echo "GOT: $COMMIT - $MSG"
 		continue
 	fi

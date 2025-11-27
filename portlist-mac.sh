@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sudo lsof -i -P | grep LISTEN
+sudo lsof -i +c 0 -P | grep LISTEN
 

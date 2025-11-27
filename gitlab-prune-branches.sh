@@ -2,6 +2,8 @@
 
 set -e
 
+PROJECT_ID=68
+
 GOGO="${1:-false}"
 
 # we need to rerun the whole loop if we deleted some branches because we might be jumping over some of them
@@ -12,7 +14,7 @@ while [[ "$MORE" == "true" ]]; do
 	for i in $(seq 1 20); do
 		echo "page $i ..."
 		BRANCHES=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_ACCESS_TOKEN" \
-	    					--url "https://gitlab.prvbl.com/api/v4/projects/68/repository/branches?per_page=100&page=${i}" | jq -r '.[] | @base64')
+	    					--url "https://gitlab.prvbl.com/api/v4/projects/${PROJECT_ID}/repository/branches?per_page=100&page=${i}" | jq -r '.[] | @base64')
 		if [[ "$BRANCHES" == "" ]]; then
 			break
 		fi
@@ -34,16 +36,21 @@ while [[ "$MORE" == "true" ]]; do
 				if [[ "$GOGO" == "true" ]]; then
 					MORE="true"
 					curl -s --fail -X DELETE --header "PRIVATE-TOKEN: $GITLAB_ACCESS_TOKEN" \
-	    					--url "https://gitlab.prvbl.com/api/v4/projects/68/repository/branches/$(printf %s "${BRANCH}" | sed -e 's/^[[:space:]]*//' | jq -sRr @uri)" && echo 'deleted'
+	    					--url "https://gitlab.prvbl.com/api/v4/projects/${PROJECT_ID}/repository/branches/$(printf %s "${BRANCH}" | sed -e 's/^[[:space:]]*//' | jq -sRr @uri)" && echo 'deleted'
 				fi
-			fi
-
-			if ([[ "$BRANCH" =~ ^AURORA-[0-9]{3,4}\/ ]] || [[ "$BRANCH" =~ ^(chore|fix|feat|feature|test|tests|backup)/ ]]) && [[ $DIFF -gt 365 ]]; then
+			elif ([[ "$BRANCH" =~ ^AURORA-[0-9]{3,4}$ ]] || [[ "$BRANCH" =~ ^AURORA-[0-9]{3,4}[\/-] ]] || [[ "$BRANCH" =~ ^(chore|fix|feat|feature|test|tests|backup)/ ]]) && [[ $DIFF -gt 365 ]]; then
+				echo "[[$BRANCH]](${DIFF} days old) is old ($GOGO)"
+				if [[ "$GOGO" == "true" ]]; then
+					MORE="true"
+					curl -s --fail -X DELETE --header "PRIVATE-TOKEN: $GITLAB_ACCESS_TOKEN" \
+	    					--url "https://gitlab.prvbl.com/api/v4/projects/${PROJECT_ID}/repository/branches/$(printf %s "${BRANCH}" | sed -e 's/^[[:space:]]*//' | jq -sRr @uri)" && echo 'deleted'
+				fi
+			elif ([[ ! "$BRANCH" =~ ^(backup|archive)/ ]]) && [[ $DIFF -gt 700 ]]; then
 				echo "[[$BRANCH]](${DIFF} days old) is very old ($GOGO)"
 				if [[ "$GOGO" == "true" ]]; then
 					MORE="true"
 					curl -s --fail -X DELETE --header "PRIVATE-TOKEN: $GITLAB_ACCESS_TOKEN" \
-	    					--url "https://gitlab.prvbl.com/api/v4/projects/68/repository/branches/$(printf %s "${BRANCH}" | sed -e 's/^[[:space:]]*//' | jq -sRr @uri)" && echo 'deleted'
+	    					--url "https://gitlab.prvbl.com/api/v4/projects/${PROJECT_ID}/repository/branches/$(printf %s "${BRANCH}" | sed -e 's/^[[:space:]]*//' | jq -sRr @uri)" && echo 'deleted'
 				fi
 			fi
 		done

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+KUBELOGTAIL=${KUBELOGTAIL:-10000}
+
 POD=( $(kubectl -n $KUBECTL_NAMESPACE get pods | grep $1 | awk '{print $1}') )
 
 if [[ "${#POD[@]}" == "0" ]]; then
@@ -22,4 +24,4 @@ echo $POD
 #  kubectl wait -n $KUBECTL_NAMESPACE pod/$POD --for=condition=Ready --timeout=300s
 #fi
 
-kubectl logs -n $KUBECTL_NAMESPACE --tail=10000 -f $POD ${@:2}
+kubectl logs -n $KUBECTL_NAMESPACE --tail=$KUBELOGTAIL -f $POD ${@:2}
